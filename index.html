@@ -67,9 +67,8 @@
     </script>
 
     <script id='script' type="module">
-      import { injectVue, router } from './petite-router.js'
+      import { injectVue } from './petite-router.js'
       window.addEventListener('load', ()=>{ 
-        router(); 
         injectVue('footer','#footer') 
       })
     </script>

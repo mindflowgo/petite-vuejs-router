@@ -100,5 +100,7 @@ async function router( routeNameHash, routerEl='#router', restrictRoutes=[] ){
  
 // run router on hashtag changes
 window.addEventListener('hashchange', router )
+// run router as soon as page loaded
+window.addEventListener('load', router )
 
 export { injectVue,router }
