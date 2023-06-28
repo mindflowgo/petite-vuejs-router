@@ -1,0 +1,29 @@
+<script>
+  function Register(props) {
+    return {
+      ...props,
+        set: props.set,
+      incCounter() {
+        this.countRegister++
+        this.set('countRegister',this.countRegister)
+      },
+      mounted() {
+        // console.log( `mounted called, globalData: `, this.count4 )
+      },
+      unmounted(){
+        console.log( `saving before unmount ...`, globalStore )
+      }
+    }
+  }
+</script>
+
+<div v-scope="Register({ ...globalStore.Register })" @vue:mounted="mounted" @vue:unmounted="unmounted">
+  <h1>Register Route</h1>
+  <p>This is the register route</p>
+
+  <div class="alert alert-success" role="alert">
+    counter: {{ countRegister }}
+  </div>
+      
+  <button @click="incCounter" type="button" class="btn btn-success">Counter Increase</button>
+</div>

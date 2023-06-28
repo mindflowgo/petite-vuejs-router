@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+      <meta charset="UTF-8" />
+      <title>Petite-VueJS Router Example</title>
+      <meta
+        name="viewport"
+        content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      />
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="msapplication-tap-highlight" content="no" />
+
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div class="container px-4 py-5" id="featured-3">
+        <div id="footer"></div>
+
+        <div class="mx-5 text-center">
+          <svg class="logo" viewBox="0 0 128 128" width="96" height="96" data-v-11b02119=""><path fill="#42b883" d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z" data-v-11b02119=""></path><path fill="#35495e" d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z" data-v-11b02119=""></path></svg>
+        </div>
+        
+        <h2 class="pb-2 border-bottom">Routes:</h2>
+
+        <div class="list-group list-group-checkable d-grid gap-2 border-0">
+          <!-- change the hashtags anyway and it will trigger the router -->
+          <ul>
+            <li><a href="#index" class="icon-link">/#index</a>: Default route</li>
+            <li><a href="#register" class="icon-link">/#register</a>: Loads <strong>html/register.html</strong> Vue page</li>
+            <li><a href="#signup" class="icon-link">/#signup</a>: Loads <strong>html/signup.html</strong> Vue page</li>
+          </ul>
+        </div>
+
+        <h2 class="pb-2 border-bottom">Router Display:</h2>
+        <!-- router content goes in the #router element -->
+        <div id='router' class="p-5 text-center border rounded-5"></div>  
+        
+        <hr />
+        <h4>Main Page Vue Content</h4>
+
+        <template id="counter-template">
+          <div  class="alert alert-secondary">
+            VueTemplate count: {{ count }}
+            <button class="btn btn-secondary" @click="inc">Inc</button>
+          </div>
+        </template>
+        
+        <!-- reuse it -->
+        <br />
+        
+        <div v-scope="Index({ initialCount: 1 })"></div>
+        <div v-scope="Index({ initialCount: 2 })"></div>
+    </div>
+    
+    <!-- a sample global store with keys for global content per route 
+        again, this is a generalized tool that may not fit everyone's needs, 
+        but was done to provide a clean simple to use yet powerful solution
+        (for a use-case I had!) -->
+    <script>
+      const globalStore = {
+        General: { helloMessage: 'Welcome to our site!' },
+        Signup: { countSignup: 123, set: function( name,val ){ globalStore.Signup[name] = val } }, 
+        Register: { countRegister: 321, set: function( name,val ){ globalStore.Register[name] = val }  },
+      }
+    </script>
+
+    <script id='script' type="module">
+      import { injectVue, router } from './petite-router.js'
+      window.addEventListener('load', ()=>{ 
+        router(); 
+        injectVue('footer','#footer') 
+      })
+    </script>
+
+    <!-- here's the vue code for this page, this is optional if the content outside the 
+         router is not needed to be VueJS-enabled -->
+    <script id='script' type="module">
+      import { createApp } from 'https://unpkg.com/petite-vue?module'
+      //import { createApp } from 'petite-vue'
+
+      function Index(props) {
+        return {
+          $template: '#counter-template',
+          count: props.initialCount,
+          inc() {
+            this.count++
+          },
+        }
+      }
+      createApp({ Index }).mount()
+    </script>
+  </body>
+</html>
