@@ -17,6 +17,8 @@ import { createApp } from 'https://unpkg.com/petite-vue?module'
 
 // router template files
 const htmlPath = './html/'
+// URL's will be mydomain.com/#/page (skipPos=2) vs mydomain.com/#page (skipPos=1)
+const skipPos = 2
 
 // if multiple routers sometimes sub-routers will attempt rendering before the outter one
 // the system will delay 10s and try again (up to 500ms, else there must be other issues!!!)
@@ -157,9 +159,10 @@ async function injectHtmlPage( templateName, targetEl, initAction='mountSelf' ){
  * respective content in the tag
  **/
 async function router( routerEl,callbackAction,routeSubPath,hash ){
+   if( routeSubPath.substring(0,1)==='/' ) routeSubPath = routeSubPath.slice(1)
    const depth = [...routeSubPath].filter(x => x === '/').length
-   const paths = location.hash.slice(1).toLowerCase().split('/')
-   const oldURL = hash && hash.oldURL ? (hash.oldURL.substring(hash.oldURL.indexOf('#')).slice(1).toLowerCase() || '').split('/') : []
+   const paths = location.hash.slice(skipPos).toLowerCase().split('/')
+   const oldURL = hash && hash.oldURL ? (hash.oldURL.substring(hash.oldURL.indexOf('#')).slice(skipPos).toLowerCase() || '').split('/') : []
    let routePath = paths[0] || 'index'
    let oldPath = oldURL[0] || ''
    let routeBase = ''
@@ -168,6 +171,7 @@ async function router( routerEl,callbackAction,routeSubPath,hash ){
       oldPath += '/' + oldURL[i+1]
       routeBase += paths[i]+'/'
    }
+
    if( oldPath!=='' && oldPath===routePath ){
       // console.log( `[router:${depth}] path unchanged (${routePath}), ignoring.`)
       return

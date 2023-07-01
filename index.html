@@ -27,9 +27,9 @@
         <div class="list-group list-group-checkable d-grid gap-2 border-0">
           <!-- change the hashtags anyway and it will trigger the router -->
           <ul>
-            <li><a href="#index" class="icon-link">/#index</a>: Default route</li>
-            <li><a href="#register" class="icon-link">/#register</a>: Loads <strong>html/register.html</strong> Vue page</li>
-            <li><a href="#signup" class="icon-link">/#signup</a>: Loads <strong>html/signup.html</strong> Vue page</li>
+            <li><a href="#/" class="icon-link">/#/</a>: Default route</li>
+            <li><a href="#/register" class="icon-link">/#/register</a>: Loads <strong>html/register.html</strong> Vue page</li>
+            <li><a href="#/signup" class="icon-link">/#/signup</a>: Loads <strong>html/signup.html</strong> Vue page</li>
           </ul>
         </div>
 
@@ -71,7 +71,7 @@
       // main router
       routerInit('#router','mountVue') 
       // sub-router for the register/... path
-      routerInit('#router_register','mountSelf','register/')
+      routerInit('#router_register','mountSelf','/register/')
 
       window.addEventListener('load', ()=>injectHtmlPage('footer','#footer') )
     </script>
