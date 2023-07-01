@@ -160,7 +160,7 @@ async function router( routerEl,callbackAction,routeSubPath,hash ){
    const depth = [...routeSubPath].filter(x => x === '/').length
    const paths = location.hash.slice(1).toLowerCase().split('/')
    const oldURL = hash && hash.oldURL ? (hash.oldURL.substring(hash.oldURL.indexOf('#')).slice(1).toLowerCase() || '').split('/') : []
-   let routePath = paths[0]
+   let routePath = paths[0] || 'index'
    let oldPath = oldURL[0] || ''
    let routeBase = ''
    for( let i=0; i<depth; i++ ){
