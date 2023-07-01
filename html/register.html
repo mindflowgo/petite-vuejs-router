@@ -19,11 +19,19 @@
 
 <div v-scope="Register({ ...globalStore.Register })" @vue:mounted="mounted" @vue:unmounted="unmounted">
   <h1>Register Route</h1>
-  <p>This is the register route</p>
+  <div class="row">
+    <div class="col">
+      <p>This is the main register route</p>
 
-  <div class="alert alert-success" role="alert">
-    counter: {{ countRegister }}
+      <div class="alert alert-success" role="alert">
+        counter: {{ countRegister }}
+      </div>
+      <button @click="incCounter" type="button" class="btn btn-success">Counter Increase</button>
+    </div>
+    <div class="col">
+      These are sub-routes in register:
+      <div id="router_register" class="border mx-5">
+      </div>
+    </div>
   </div>
-      
-  <button @click="incCounter" type="button" class="btn btn-success">Counter Increase</button>
 </div>

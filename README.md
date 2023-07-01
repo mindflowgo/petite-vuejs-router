@@ -1,22 +1,38 @@
-# Petite-VueJS Router
+# Petite-Router
 
-Petite-VueJS is positioned as a very simple tool to allow plugging in vue-compatible code into some project.
+Petite-Router is a simple yet powerful router that tries to stay out of your way, regardless of your development framework.
 
-It's a very small library (6k) that works directly on the DOM, yet it allows all the familiar elements of working with Vue-JS.
+Routers can be nested, scope is not affected by the router
 
-However, because of it's scope, it's intentionally not made to have routing, etc.
+Use it as a module as follows:
 
-Frameworks like React and VueJS 3 are awesome, but because they do not work on the DOM directly and you have to jump through their gatekeeping DOM-manipulation tools (Reactive/useState/...).
+```
+import { routerInit,injectHtmlPage } from './petite-router.js'
 
-If you want to work around other vanilla HTML/CSS/Javascript elements, then it becomes much more challenging... so you are forced into using libraries that have been adapter for the respective framework.
+// main router
+routerInit('#router','mountVue') 
 
-This was where the AureliaJS framework really shone because it worked on the DOM directly, was pretty straightforward, but unfortunately never developed mass-following. Petite-Vue, and 
-other solutions like Alpine seem to build on that vision, so I thought I'd add in an example 
-of how to do routing and global store within it.
+// sub-router for the register/... path
+routerInit('#router_register','mountSelf','register/')
+```
 
-My basic vision: a framework that works directly on the DOM, hence allowing all the regular 
-javascript tools, thus it keeps out of the way, yet provides all the power of itself when 
-needed. In memory of AureliaJS, I share this!
+This loads the router, you can then initialize it by simply calling *routerInit([router element], [initializer script], [lock-router path] )*
+
+For a root-level router, you just need element where router will place route components and how to initialize the route component.
+
+If you are nesting a route, as above, it means that there's a secondary router that only works on the path *register/* : so this route works on sub-links like register/index|register/user|register/general, and it will look for a subdirectory in html with these files (register/index.html, register/user.html, ...)
+
+Currently implementation for Petite-VueJS has been showcased.
+
+# Why Use Petite Router?
+
+Frameworks like React and VueJS 3 are awesome, but because they do not work on the DOM directly, most libraries working on vanilla-JS will not work or refresh properly with them.
+
+This is where simpler frameworks worked great (I really liked one called AureliaJS). Vue has released a nice stripped-down version that works directly on the DOM called Petite-Vue, and it combined with this router gives a healthy amount of functionality and flexibility to use other vanilla-JS features.
+
+Some good articles on 'routing' here:
+
+[Routing In Javascript](https://medium.com/@fro_g/routing-in-javascript-d552ff4d2921)
 
 Feedback welcome here.
 

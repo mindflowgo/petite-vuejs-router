@@ -28,7 +28,7 @@
           <!-- change the hashtags anyway and it will trigger the router -->
           <ul>
             <li><a href="#index" class="icon-link">/#index</a>: Default route</li>
-            <li><a href="#register" class="icon-link">/#register</a>: Loads <strong>html/register.html</strong> Vue page</li>
+            <li><a href="#register/index" class="icon-link">/#register</a>: Loads <strong>html/register.html</strong> Vue page</li>
             <li><a href="#signup" class="icon-link">/#signup</a>: Loads <strong>html/signup.html</strong> Vue page</li>
           </ul>
         </div>
@@ -67,10 +67,13 @@
     </script>
 
     <script id='script' type="module">
-      import { injectVue } from './petite-router.js'
-      window.addEventListener('load', ()=>{ 
-        injectVue('footer','#footer') 
-      })
+      import { routerInit,injectHtmlPage } from './petite-router.js'
+      // main router
+      routerInit('#router','mountVue') 
+      // sub-router for the register/... path
+      routerInit('#router_register','mountSelf','register/')
+
+      window.addEventListener('load', ()=>injectHtmlPage('footer','#footer') )
     </script>
 
     <!-- here's the vue code for this page, this is optional if the content outside the 
