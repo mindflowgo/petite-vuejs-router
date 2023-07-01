@@ -18,9 +18,11 @@ routerInit('#router_register','mountSelf','register/')
 
 This loads the router, you can then initialize it by simply calling *routerInit([router element], [initializer script], [lock-router path] )*
 
-For a root-level router, you just need element where router will place route components and how to initialize the route component.
+For a root-level router, you just need element where router will place route components and how to initialize the route component. You don't need to do any tables additional javascript: the router simply looks for a file that corresponds to the route-path!
 
-If you are nesting a route, as above, it means that there's a secondary router that only works on the path *register/* : so this route works on sub-links like register/index|register/user|register/general, and it will look for a subdirectory in html with these files (register/index.html, register/user.html, ...)
+For example *#register, #signup* routes look for the *html/register.html* and *html/signup.html*, etc.
+
+Likewise the register page has a sub-router. This was initialized on the main page as *routerInit('#router_register','mountSelf','register/')*, and so this router will look for any changes on the path register/ and try to load corresponding templates into #router_register. So in this case, these paths are specified *#register/, #register/user, #register/general* and these look for the subdirectory register and corresponding files (index.html, user.html, general.html).
 
 Currently implementation for Petite-VueJS has been showcased.
 

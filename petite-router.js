@@ -148,11 +148,8 @@ async function injectHtmlPage( templateName, targetEl, initAction='mountSelf' ){
             this[initScript].init()
       } else {
          eval( `if( typeof(${initScript})==='function' ) ${initScript}(); else if( typeof(${initScript})==='object' ) ${initScript}.init(); ` )
-
       }
    }
-
-   
 }
 
 /**
@@ -167,7 +164,7 @@ async function router( routerEl,callbackAction,routeSubPath,hash ){
    let oldPath = oldURL[0] || ''
    let routeBase = ''
    for( let i=0; i<depth; i++ ){
-      routePath += '/' + paths[i+1] || 'index'
+      routePath += '/' + (paths[i+1]||'index')
       oldPath += '/' + oldURL[i+1]
       routeBase += paths[i]+'/'
    }
