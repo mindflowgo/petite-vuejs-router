@@ -182,7 +182,7 @@ async function router( routerEl,callbackAction,routeSubPath,hash ){
       return
    
    } else if( routePath.indexOf(routeSubPath)>-1) { // determine if this router is to manage this route change
-      console.log( `[router:${depth}] path changed & part of subpath, updating: routePath(${routePath})`)
+      if( DEBUG ) console.log( `[router:${depth}] path changed & part of subpath, updating: routePath(${routePath})`)
       if( routePath.substring(routePath.length-1)==='/' ) routePath += 'index'
       injectHtmlPage( routePath, routerEl, callbackAction )
    }
