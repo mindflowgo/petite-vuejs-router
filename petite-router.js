@@ -2,7 +2,7 @@
  * Petite Router
  * 
  * Written by Filipe Laborde
- * version 1.1
+ * version 1.2
  * 
  * Simple generic router that attempts to let you
  * use any sort of javascript frameworks and just
@@ -19,6 +19,7 @@ import { createApp } from 'https://unpkg.com/petite-vue?module'
 const htmlPath = './html/'
 // URL's will be mydomain.com/#/page (skipPos=2) vs mydomain.com/#page (skipPos=1)
 const skipPos = 2
+const DEBUG = false
 
 // if multiple routers sometimes sub-routers will attempt rendering before the outter one
 // the system will delay 10s and try again (up to 500ms, else there must be other issues!!!)
@@ -34,11 +35,13 @@ async function injectInDOM( targetEl, html ){
       } else if( tryMax>0 ) {
          setTimeout( function(){ _tryInject(resolve,reject,targetEl,html) }, 10 )
       } else {
+         console.log( `[injectInDOM] FAILED! rejecting.`)
          reject()
       }
    }
    return new Promise( async (resolve,reject)=>{
       if( document.querySelector(targetEl) ){
+         if( DEBUG ) console.log( ` .. injected ${html.length} bytes... `)
          document.querySelector(targetEl).innerHTML = html
          resolve()
       } else {
@@ -56,12 +59,13 @@ async function injectHtmlAndScript( file,targetEl ){
          console.log( `[injectHtmlAndScript] Failed! file(${file}) targetEl(${targetEl})` )
          reject()
       }
+      if( DEBUG ) console.log( `[injectHtmlAndScript] fetching ${htmlPath}${file}.html ...` )
       let html = await fetch(`${htmlPath}${file}.html`).then ( async r=>r.ok ? r.text() : '' )
       // TEMP removes pre-pended debuggers (vite|vscode) injected at start
-      const scanPos = html.indexOf('<'+'/script>')
-      const scan = html.substring(0,scanPos).toLowerCase()
-      if( scan.indexOf('src="/@vite/client"') || scan.indexOf('src="/___vscode_livepreview_injected_script"') )
-         html = html.substring(scanPos+9)
+      // const scanPos = html.indexOf('<'+'/script>')
+      // const scan = html.substring(0,scanPos).toLowerCase()
+      // if( scan.indexOf('src="/@vite/client"') || scan.indexOf('src="/___vscode_livepreview_injected_script"') )
+      //    html = html.substring(scanPos+9)
       
       // script has to be handled differently, so parse it off (it needs to be placed first)
       const scriptRegEx = /<script(\b[^>]*)>([\s\S]*?)<\/script>/gmi
@@ -77,28 +81,29 @@ async function injectHtmlAndScript( file,targetEl ){
          const scriptData = {idx: script.index, len: script[0]?.length, src: src ? src[1] : null, text: script[2].trim() }
          scriptBlocks.push(scriptData)
       }
+
+      // remove previous script blocks of this same target, before adjusting html / injecting new
+      const scriptTargetEl = ['.','#'].includes(targetEl[0]) ? targetEl.slice(1) : targetEl
+      const removeNodes = document.body.querySelectorAll( `[id^='__${scriptTargetEl}']` )
+      for( let i=0; i<removeNodes.length; i++ )
+         removeNodes[i].parentNode.removeChild(removeNodes[i])
+
       // now remove these blocks from the html
       for( let block of scriptBlocks )
          html = (block.idx>0 ? html.substring(0,block.idx) : '' )+html.substring(block.idx+block.len)
          
       if( html.length ){
-         // console.log( ` writing ${html.length}bytes to ${targetEl}`)
+         if( DEBUG ) console.log( ` injectInDOM ${html.length}bytes to ${targetEl}`)
          await injectInDOM( targetEl, html )
          // document.querySelector(targetEl).innerHTML = html
       }
-
-      // remove previous script blocks of this same target, before injecting new
-      targetEl = ['.','#'].includes(targetEl[0]) ? targetEl.slice(1) : targetEl
-      const removeNodes = document.body.querySelectorAll( `[id^='__${targetEl}']` )
-      for( let i=0; i<removeNodes.length; i++ )
-         removeNodes[i].parentNode.removeChild(removeNodes[i])
 
       if( scriptBlocks.length ){
          for( let i=0; i<scriptBlocks.length; i++ ){
             // creates in shadowDOM first then injects into DOM
             const s = document.createElement('script')
             // s.type = 'module';
-            s.id = `__${targetEl}${i}`
+            s.id = `__${scriptTargetEl}${i}`
             if( scriptBlocks[i].src ){
                console.log( `[Warning] Skipping external source '${scriptBlocks[i].src}'...` )
                // doesn't work, if find a way add - but remember to SKIP src ~= vite|vscode (for debuggers)
@@ -132,14 +137,14 @@ async function injectHtmlPage( templateName, targetEl, initAction='mountSelf' ){
       function PascalCase( str ){
          let out = str[0].toUpperCase()
          for( let i=1; i<str.length; i++ ){
-             if( str[i]==='/' ) continue
+             if( str[i]==='/' || str[i]==='-' ) continue
              if( str[i]==='.' ) return out
-             out += ( str[i-1]==='/' ? str[i].toUpperCase() : str[i] )
+             out += ( str[i-1]==='/' || str[i-1]==='-' ? str[i].toUpperCase() : str[i] )
          }
          return out
       }
       const initScript = PascalCase(templateName)
-      // console.log( ` ... running ${initAction} on  ${initScript}` )
+      if( DEBUG ) console.log( ` ... running ${initAction} on ${initScript}` )
       if( initAction==='mountVue' ){
          createApp({ initScript }).mount()
 
@@ -177,7 +182,7 @@ async function router( routerEl,callbackAction,routeSubPath,hash ){
       return
    
    } else if( routePath.indexOf(routeSubPath)>-1) { // determine if this router is to manage this route change
-      // console.log( `[router:${depth}] path changed & part of subpath, updating: routePath(${routePath})`)
+      console.log( `[router:${depth}] path changed & part of subpath, updating: routePath(${routePath})`)
       if( routePath.substring(routePath.length-1)==='/' ) routePath += 'index'
       injectHtmlPage( routePath, routerEl, callbackAction )
    }
